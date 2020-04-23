@@ -1,16 +1,35 @@
 package com.enveriesagestudios.gwrate;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.widget.*;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.firebase.auth.*;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
     //Declare an instance of firebase Auth
     private FirebaseAuth mAuth;
+    private EditText edtEmail;
+    private EditText edtPass;
+    private Button btLogin;
+    private TextView btRegister;
+
+    //Declare Tag
+    private static final String TAG = "LoginActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,66 +39,71 @@ public class LoginActivity extends AppCompatActivity {
         //Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        //Definisi Button
-        final EditText etEmail = findViewById(R.id.etEmail);
-        final EditText etPassword = findViewById(R.id.etPassword);
-        final Button btnLogin = findViewById(R.id.btnLogin);
-        final TextView tvRegister = findViewById(R.id.tvRegister);
+        //Button Definition
+        edtEmail = findViewById(R.id.etEmail);
+        edtPass = findViewById(R.id.etPassword);
+        btLogin = findViewById(R.id.btnLogin);
+        btRegister = findViewById(R.id.tvRegister);
 
-        //Login Button
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        //Onclick Listener
+        btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                String email = etEmail.getText().toString();
-                String password  = etPassword.getText().toString();
-
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try{
-                            JSONObject jsonResponse = new JSONObject(response);
-                            if(jsonResponse != null) {
-                                Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_LONG).show();
-                            }
-                        } catch (JSONException e){
-                            Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                };
-
-                Response.ErrorListener errorListener = new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Error", "Error Occured", error);
-                    }
-                };
-
-                LoginRequest loginRequest = new LoginRequest(email, password, responseListener, errorListener);
-                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-                queue.add(loginRequest);
+            public void onClick(View v) {
+                signIn();
             }
         });
-
-        //Register Button
-        tvRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent registrationIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(registrationIntent);
-            }
-        });
-
     }
 
-    //Checking on start if the user is logged in or not
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        //updateUI(currentUser);
+    //Checking email authentication
+    private void signIn() {
+        if (!validateForm()) {
+            return;
+        }
+
+        //showProgressDialog();
+        String email = edtEmail.getText().toString();
+        String password = edtPass.getText().toString();
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Toast.makeText(LoginActivity.this, "Authentication Success.", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "signInWithCustomToken:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            //updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCustomToken:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            //updateUI(null);
+                        }
+                    }
+                });
+    }
+
+    //Validation Form
+    private boolean validateForm() {
+        boolean result = true;
+        if (TextUtils.isEmpty(edtPass.getText().toString())&&TextUtils.isEmpty(edtEmail.getText().toString())) {
+            Toast.makeText(LoginActivity.this, "Email and Password Required", Toast.LENGTH_LONG).show();
+            edtPass.setError("Required");
+            edtEmail.setError("Required");
+            result = false;
+        } else if (TextUtils.isEmpty(edtEmail.getText().toString())) {
+            Toast.makeText(LoginActivity.this, "Email Required", Toast.LENGTH_LONG).show();
+            edtEmail.setError("Required");
+            result = false;
+        } else if (TextUtils.isEmpty(edtPass.getText().toString())) {
+            Toast.makeText(LoginActivity.this, "Password Required", Toast.LENGTH_LONG).show();
+            edtPass.setError("Required");
+            result = false;
+        } else {
+            edtPass.setError(null);
+        }
+        return result;
     }
 
 }
