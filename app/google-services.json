@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "494702131878",
+    "firebase_url": "https://gwrate-d2c54.firebaseio.com",
+    "project_id": "gwrate-d2c54",
+    "storage_bucket": "gwrate-d2c54.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494702131878:android:224708caa26f0dcd839267",
+        "android_client_info": {
+          "package_name": "com.enveriesagestudios.gwrate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "494702131878-re0lt9eaikkd72grble9tk04kosg58a7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.enveriesagestudios.gwrate",
+            "certificate_hash": "313d8607b59b05d25a92f7a3e21f3b48eedae655"
+          }
+        },
+        {
+          "client_id": "494702131878-m26drapr4lc9f3fc7rkgpt4132jh099v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUvUHMSldnHJVX8VW3jpvlpSKL--lKBho"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "494702131878-m26drapr4lc9f3fc7rkgpt4132jh099v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
