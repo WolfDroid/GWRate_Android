@@ -3,6 +3,7 @@ package com.enveriesagestudios.gwrate;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -52,9 +53,18 @@ public class LoginActivity extends AppCompatActivity {
                 signIn();
             }
         });
+
+        //Register Button
+        btRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent registrationIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(registrationIntent);
+            }
+        });
     }
 
-    //Checking email authentication
+    //Sign In Authentication
     private void signIn() {
         if (!validateForm()) {
             return;
