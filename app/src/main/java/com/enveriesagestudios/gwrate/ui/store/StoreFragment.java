@@ -1,10 +1,9 @@
-package com.enveriesagestudios.gwrate.ui.login;
+package com.enveriesagestudios.gwrate.ui.store;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,20 +13,18 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.enveriesagestudios.gwrate.R;
 
-public class LoginFragment extends Fragment {
+public class StoreFragment extends Fragment {
 
-    private LoginViewModel loginViewModel;
+    private StoreViewModel storeViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        loginViewModel =
-                ViewModelProviders.of(this).get(LoginViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_login, container, false);
-        final TextView textView = root.findViewById(R.id.text_gallery);
-        loginViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        storeViewModel =
+                ViewModelProviders.of(this).get(StoreViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_store, container, false);
+        storeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                textView.setText(s);
             }
         });
         return root;

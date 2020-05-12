@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-
+        //Create user function
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -131,11 +131,13 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         //Password and Re password Equalize Checker
-        if ( edtRePassword.getText().toString().equals( edtPassword.getText().toString() ) ){
-            result = true;
-        } else {
-            edtRePassword.setError("Password does not match");
-            result = false;
+        if (!TextUtils.isEmpty(edtPassword.getText().toString()) &&!TextUtils.isEmpty(edtRePassword.getText().toString())){
+            if ( edtRePassword.getText().toString().equals( edtPassword.getText().toString() ) ){
+                result = true;
+            } else {
+                edtRePassword.setError("Password does not match");
+                result = false;
+            }
         }
 
         return result;

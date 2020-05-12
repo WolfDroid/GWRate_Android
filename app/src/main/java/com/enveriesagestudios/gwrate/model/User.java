@@ -23,6 +23,9 @@ package com.enveriesagestudios.gwrate.model;
  */
 
 //External Library
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,41 +35,55 @@ import java.time.format.DateTimeFormatter;
 
 public class User{
     // instance variables
-    private String id;
+    private String uid;
     private String name;
     private String email;
     private String password;
     private Calendar joinDate;
+    private String profilePicture;
+    private String coverPicture;
+    private String address;
+    private String phoneNumber;
 
     //Constructor
-    public User(String id, String name, String email, String password, Calendar joinDate){
-        this.id = id;
+    public User(String uid, String name, String email, String password, Calendar joinDate){
+        this.uid = uid;
         this.name = name;
         this.email = email;
         this.password = password;
         this.joinDate = joinDate;
     }
 
-    public User(String id, String name, String email, String password, int year, int month, int dayOfMonth){
-        this.id = id;
-        this.name = name;
+    public User(String uid, String email, String name, String password, int year, int month, int dayOfMonth){
+        this.uid = uid;
         this.email = email;
+        this.name = name;
         this.password = password;
         this.joinDate = new GregorianCalendar(year, month-1,dayOfMonth);
     }
 
-    //Constructor without Password
-    public User(String id, String name, String email){
-        Calendar now = Calendar.getInstance();
-        this.id = id;
-        this.name = name;
+    //Constructor without Password for Register
+    public User(String uid, String email, String name){
+        this.uid = uid;
         this.setEmail(email);
-        this.joinDate = now;
+        this.name = name;
+    }
+
+    //Constructor for Profile
+    public User(String uid, String name, String email, String password, String profilePicture, String coverPicture, String address, String phoneNumber) {
+        this.uid = uid;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.profilePicture = profilePicture;
+        this.coverPicture = coverPicture;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
     }
 
     //Accessor
-    public String getId(){
-        return id;
+    public String getUid(){
+        return uid;
     }
     public String getName(){
         return name;
@@ -80,15 +97,18 @@ public class User{
     public Calendar getJoinDate(){
         return joinDate;
     }
+    public String getProfilePicture() { return profilePicture; }
+    public String getCoverPicture() { return coverPicture; }
+    public String getAddress() { return address; }
+    public String getPhoneNumber() { return phoneNumber; }
 
     //Mutator
-    public void setId(String id){
-        this.id = id;
+    public void setUid(String uid){
+        this.uid = uid;
     }
     public void setName(String name){
         this.name = name;
     }
-
     public void setEmail(String email){
         Pattern pattern = Pattern.compile("^[\\w%&_*~]+(?:\\.[\\w&_*~]+)*@(?!-)(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
         Matcher match = pattern.matcher(email);
@@ -118,21 +138,8 @@ public class User{
     public void setJoinDate(int year, int month, int dayOfMonth){
         this.joinDate = new GregorianCalendar(year, month-1,dayOfMonth);
     }
-
-    //To String
-    public String toString() {
-        String string = "";
-        Date date = joinDate.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMMM yyyy");
-        String formatted = formatter.format(date);
-        string = "============User============\n" +
-                "ID: " + id + "\n" +
-                "Name: " + name + "\n" +
-                "Email:" + email + "\n" +
-                "Password :" + password + "\n";
-        if (joinDate != null) {
-            string = string + "joinDate :" + date + "\n";
-        }
-        return string;
-    }
+    public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture; }
+    public void setCoverPicture(String coverPicture){ this.coverPicture = coverPicture; }
+    public void setAddress(String address) { this.address = address; }
+    public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber; }
 }

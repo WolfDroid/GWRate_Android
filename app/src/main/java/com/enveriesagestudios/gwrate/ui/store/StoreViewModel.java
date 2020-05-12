@@ -1,14 +1,14 @@
-package com.enveriesagestudios.gwrate.ui.login;
+package com.enveriesagestudios.gwrate.ui.store;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class LoginViewModel extends ViewModel {
+public class StoreViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public LoginViewModel() {
+    public StoreViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is gallery fragment");
     }
