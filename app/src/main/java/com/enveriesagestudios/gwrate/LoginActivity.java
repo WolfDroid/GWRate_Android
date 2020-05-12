@@ -36,7 +36,6 @@ public class LoginActivity extends AppCompatActivity {
     //Declare Tag
     private static final String TAG = "LoginActivity";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         btRegister = findViewById(R.id.tvRegister);
         btRecovery = findViewById(R.id.tvRecover);
 
-        //Onclick Listener
+        //Login Button
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,17 +65,26 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent registrationIntent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(registrationIntent);
+                finish();
             }
         });
 
+        //Recovery Email Button
         btRecovery.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 showRecoverPasswordDialog();
             }
         });
+        //Checking if the user is Signed in or not
+        if(mAuth.getCurrentUser() != null){
+            Toast.makeText(this, "Logged in as "+ mAuth.getCurrentUser().getDisplayName(),Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            finish();
+        }
     }
 
+    //Recovering password dialog
     private void showRecoverPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Recover Password");
@@ -84,14 +92,12 @@ public class LoginActivity extends AppCompatActivity {
         final EditText emailEt =new EditText(this);
         emailEt.setHint("Email");
         emailEt.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-
         emailEt.setMinEms(10);
-
         linearLayout.addView(emailEt);
         linearLayout.setPadding(10,10,10,10);
-
         builder.setView(linearLayout);
 
+        //Recover Button
         builder.setPositiveButton("Recover", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -101,6 +107,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        //Cancel Button
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -112,14 +119,16 @@ public class LoginActivity extends AppCompatActivity {
         builder.create().show();
     }
 
+    //Begin Recovery Function
     private void beginRecovery(String email) {
-
         mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                //Success Sent an Email
                 if (task.isSuccessful()){
                     Toast.makeText(LoginActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
                 }
+                //Failed Sent an Email
                 else{
                     Toast.makeText(LoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                 }
@@ -128,13 +137,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-
             }
         });
     }
 
     //Sign In Authentication
     private void signIn() {
+        //Form Validation Function
         if (!validateForm()) {
             return;
         }
@@ -143,6 +152,7 @@ public class LoginActivity extends AppCompatActivity {
         String email = edtEmail.getText().toString();
         String password = edtPass.getText().toString();
 
+        //Sign In Function
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -153,6 +163,9 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithCustomToken:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             //updateUI(user);
+                            Intent homeActivityIntent = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(homeActivityIntent);
+                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCustomToken:failure", task.getException());

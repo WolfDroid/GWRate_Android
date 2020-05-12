@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,6 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void signUp() {
 
         //showProgressDialog();
+        final String userFullName = edtUserName.getText().toString();
         String email = edtEmail.getText().toString();
         String password = edtPassword.getText().toString();
         String repassword = edtRePassword.getText().toString();
@@ -76,6 +78,7 @@ public class RegisterActivity extends AppCompatActivity {
         //Create user function
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
@@ -83,8 +86,29 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.d(TAG, "createUserWithEmail:success");
                             Toast.makeText(RegisterActivity.this, "Register Success", Toast.LENGTH_SHORT).show();
                             FirebaseUser user = mAuth.getCurrentUser();
+                            //Sending Verfication Email
+                            user.sendEmailVerification();
+
+
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(userFullName)
+                                    .build();
+
+                            user.updateProfile(profileUpdates)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d("add name", "User profile updated.");
+                                            }
+                                        }
+                                    });
+
+
+                            //Back to Login
                             Intent backToLoginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
                             startActivity(backToLoginIntent);
+                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
