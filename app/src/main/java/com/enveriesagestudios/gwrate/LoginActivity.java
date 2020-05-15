@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                 showRecoverPasswordDialog();
             }
         });
+
         //Checking if the user is Signed in or not
         if(mAuth.getCurrentUser() != null){
             Toast.makeText(this, "Logged in as "+ mAuth.getCurrentUser().getDisplayName(),Toast.LENGTH_SHORT).show();
@@ -103,7 +104,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String email= emailEt.getText().toString().trim();
                 beginRecovery(email);
-
             }
         });
 

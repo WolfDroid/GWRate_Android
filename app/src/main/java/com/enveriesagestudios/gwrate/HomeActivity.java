@@ -1,19 +1,32 @@
 package com.enveriesagestudios.gwrate;
 
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.text.InputType;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.enveriesagestudios.gwrate.ui.user.MainProfile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -22,7 +35,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     //Declare an instance of firebase Auth
     private FirebaseAuth mAuth;
@@ -32,6 +45,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView userName;
     private TextView userEmail;
 
+    //Declare Variable for App Bar Configuration
     private AppBarConfiguration mAppBarConfiguration;
 
     @Override
@@ -43,9 +57,9 @@ public class HomeActivity extends AppCompatActivity {
         //Initiaziation Firebase
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-
-
         setSupportActionBar(toolbar);
+
+        //Email Icon
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,24 +68,31 @@ public class HomeActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
+        //Access Header View
+        View headerview = navigationView.getHeaderView(0);
+        headerview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileUserIntent = new Intent(HomeActivity.this, MainProfile.class);
+                startActivity(profileUserIntent);
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        });
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_login, R.id.nav_slideshow)
-                .setDrawerLayout(drawer)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+        //Drawing Navigation
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-        updateNavHeader();
+        navigationView.setNavigationItemSelectedListener(this);
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,6 +108,7 @@ public class HomeActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    //Updating Navbar Header MVVM
     public void updateNavHeader() {
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -104,4 +126,52 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
+
+    //Navigation Selection Method
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        // Navigation Click Case ID
+        if (id == R.id.nav_logout) {
+            showSignoutDialog();
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id. drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    //Sigout Popup
+    private void showSignoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure?");
+        LinearLayout linearLayout = new LinearLayout(this);
+        final TextView confirmationSignout =new TextView(this);
+        linearLayout.addView(confirmationSignout);
+        builder.setView(linearLayout);
+
+        //Recover Button
+        builder.setPositiveButton("Signout", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FirebaseAuth.getInstance().signOut();
+                Intent loginActivity = new Intent(getApplicationContext(),LoginActivity.class);
+                startActivity(loginActivity);
+                finish();
+            }
+        });
+
+        //Cancel Button
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
+    }
+
+
 }

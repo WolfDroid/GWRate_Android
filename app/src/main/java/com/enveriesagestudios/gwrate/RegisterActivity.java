@@ -88,12 +88,10 @@ public class RegisterActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             //Sending Verfication Email
                             user.sendEmailVerification();
-
-
+                            //Updating username
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(userFullName)
                                     .build();
-
                             user.updateProfile(profileUpdates)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
@@ -103,8 +101,6 @@ public class RegisterActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-
-
                             //Back to Login
                             Intent backToLoginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
                             startActivity(backToLoginIntent);
