@@ -18,6 +18,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.enveriesagestudios.gwrate.ui.user.MainProfile;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.internal.NavigationMenu;
+import com.google.android.material.internal.NavigationMenuItemView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -35,7 +38,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class HomeActivity extends AppCompatActivity{
 
     //Declare an instance of firebase Auth
     private FirebaseAuth mAuth;
@@ -72,7 +75,30 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        //Access Header View
+        //Drawing Navigation
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_logout)
+                .setDrawerLayout(drawer)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+
+        //Logout Button
+        Button navLogout = findViewById(R.id.btnLogout);
+        navLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSignoutDialog();
+            }
+        });
+
+        //Accessing Header View
         View headerview = navigationView.getHeaderView(0);
         headerview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,16 +109,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        //Renew Nav Header
+        updateNavHeader();
+
+
+        /*
+
+
         //Drawing Navigation
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView.setNavigationItemSelectedListener(this);
+         */
+        //navigationView.setNavigationItemSelectedListener(this);
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -128,6 +161,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     //Navigation Selection Method
+    /*
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -141,6 +175,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+     */
 
     //Sigout Popup
     private void showSignoutDialog() {
